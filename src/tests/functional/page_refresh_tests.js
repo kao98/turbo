@@ -8,8 +8,10 @@ import {
   nextEventOnTarget,
   noNextEventOnTarget,
   noNextEventNamed,
+  sleep,
   getSearchParam,
-  refreshWithStream
+  refreshWithStream,
+  reloadPage
 } from "../helpers/page"
 
 test("renders a page refresh with morphing", async ({ page }) => {
@@ -18,6 +20,58 @@ test("renders a page refresh with morphing", async ({ page }) => {
   await page.click("#form-submit")
   await nextEventNamed(page, "turbo:before-render", { renderMethod: "morph" })
   await nextEventNamed(page, "turbo:render", { renderMethod: "morph" })
+})
+
+test("renders a page soft-reload with checkboxes", async ({ page }) => {
+  await page.goto("/src/tests/fixtures/checkbox_unchecked.html")
+
+  await page.check("#form-checkbox")
+  await page.click("#form-submit")
+
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_checked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeTruthy()
+
+  await page.uncheck("#form-checkbox")
+  await page.click("#form-submit")
+
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_unchecked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeFalsy()
+
+  await reloadPage(page)
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_unchecked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeFalsy()
+})
+
+test("renders a page hard-reload with checkboxes", async ({ page }) => {
+  await page.goto("/src/tests/fixtures/checkbox_unchecked.html")
+
+  await page.check("#form-checkbox")
+  await page.click("#form-submit")
+
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_checked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeTruthy()
+
+  await page.uncheck("#form-checkbox")
+  await page.click("#form-submit")
+
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_unchecked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeFalsy()
+
+  await page.reload()
+  await nextBody(page)
+
+  expect(await page.url()).toMatch(/checkbox_unchecked\.html/)
+  expect(await page.isChecked("#form-checkbox")).toBeFalsy()
 })
 
 test("async page refresh with turbo-stream", async ({ page }) => {

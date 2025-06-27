@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html id="html" data-skip-event-details="turbo:submit-start turbo:submit-end turbo:fetch-request-error">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="turbo-refresh-scroll" content="preserve">
+
+  <title>Turbo</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <script src="/dist/turbo.es2017-umd.js" data-turbo-track="reload"></script>
+  <script src="/src/tests/fixtures/test.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+
+      /* Ensure the page is large enough to scroll */
+      width: 150vw;
+      height: 150vh;
+    }
+  </style>
+</head>
+
+<body>
+  <form id="form" action="/__turbo/check" method="post" class="redirect">
+    <input id="form-checkbox" type="checkbox" name="checkbox">
+    <input type="hidden" name="path" value="/src/tests/fixtures/checkbox_checked.html">
+    <input type="hidden" name="sleep" value="50">
+    <input id="form-submit" type="submit" value="form[method=post]">
+  </form>
+</body>
+
+</html>

@@ -54,6 +54,26 @@ router.post("/refresh", (request, response) => {
   setTimeout(() => response.redirect("back"), parseInt(sleep || "0", 10))
 })
 
+router.post("/check", (request, response) => {
+  const { path, ...query } = request.query
+  const pathname = path ?? "/src/tests/fixtures/checkbox_checked.html"
+  const enctype = request.get("Content-Type")
+  if (enctype) {
+    query.enctype = enctype
+  }
+  response.redirect(301, url.format({ pathname, query }))
+})
+
+router.post("/uncheck", (request, response) => {
+  const { path, ...query } = request.query
+  const pathname = path ?? "/src/tests/fixtures/checkbox_unchecked.html"
+  const enctype = request.get("Content-Type")
+  if (enctype) {
+    query.enctype = enctype
+  }
+  response.redirect(301, url.format({ pathname, query }))
+})
+
 router.post("/reject/tall", (request, response) => {
   const { status } = request.body
   const fixture = path.join(__dirname, `../../src/tests/fixtures/422_tall.html`)
@@ -109,7 +129,7 @@ router.post("/refreshes", (request, response) => {
   const params = { ...request.body, ...request.query }
   const { requestId } = params
 
-  if(acceptsStreams(request)){
+  if (acceptsStreams(request)) {
     response.type("text/vnd.turbo-stream.html; charset=utf-8")
     response.send(renderPageRefresh(requestId))
   } else {
